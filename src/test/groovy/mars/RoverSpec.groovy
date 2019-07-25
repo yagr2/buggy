@@ -11,12 +11,6 @@ import static Orientation.WEST
 
 class RoverSpec extends Specification {
 
-//    def "cannot create a rover with non cardinal direction"() {
-//        expect:
-//        new Rover(new Point(1,2), 'X')
-//
-//    }
-
     def "a rover can be created and knows where it is"() {
         def rover = new Rover(new Point(1, 2), NORTH)
         expect:
