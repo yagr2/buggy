@@ -2,6 +2,12 @@ package mars
 
 
 import spock.lang.Specification
+import spock.lang.Unroll
+
+import static Orientation.EAST
+import static Orientation.NORTH
+import static Orientation.SOUTH
+import static Orientation.WEST
 
 class RoverSpec extends Specification {
 
@@ -12,58 +18,60 @@ class RoverSpec extends Specification {
 //    }
 
     def "a rover can be created and knows where it is"() {
-        def rover = new Rover(new Point(1, 2), "N")
+        def rover = new Rover(new Point(1, 2), NORTH)
         expect:
         rover.position == new Point(1, 2)
-        rover.direction == "N"
+        rover.orientation == NORTH
 
     }
 
+    @Unroll("the rover can turn #turn from #startingDirection to #expectedDirection")
     def "the rover can turn"() {
         when:
         def rover = new Rover(new Point(1,1), startingDirection)
         rover.drive(turn)
 
         then:
-        rover.direction == expectedDirection
+        rover.orientation == expectedDirection
 
 
         where:
         startingDirection | turn | expectedDirection
-        'N' | 'l' | 'W'
-        'S' | 'l' | 'E'
-        'E' | 'l' | 'N'
-        'W' | 'l' | 'S'
-        'N' | 'r' | 'E'
-        'S' | 'r' | 'W'
-        'E' | 'r' | 'S'
-        'W' | 'r' | 'N'
+        NORTH             | 'l'  | WEST
+        SOUTH             | 'l'  | EAST
+        EAST              | 'l'  | NORTH
+        WEST              | 'l'  | SOUTH
+        NORTH             | 'r'  | EAST
+        SOUTH             | 'r'  | WEST
+        EAST              | 'r'  | SOUTH
+        WEST              | 'r'  | NORTH
     }
 
+    @Unroll("when facing #rover.orientation driving forwards will move from #rover.position to #expectedPosition.position")
     def "the rover can move forwards"() {
         when:
-        rover.driveForwards()
+        rover.drive("f")
 
         then:
         rover == expectedPosition
 
         where:
-        rover                           | expectedPosition
-        new Rover(new Point(0,0), 'N')  | new Rover(new Point(0,1), 'N')
-        new Rover(new Point(0,0), 'S')  | new Rover(new Point(0,-1), 'S')
-        new Rover(new Point(0,0), 'E')  | new Rover(new Point(1,0), 'E')
-        new Rover(new Point(0,0), 'W')  | new Rover(new Point(-1,0), 'W')
+        rover                             | expectedPosition
+        new Rover(new Point(0,0), NORTH)  | new Rover(new Point(0,1), NORTH)
+        new Rover(new Point(0,0), SOUTH)  | new Rover(new Point(0,-1), SOUTH)
+        new Rover(new Point(0,0), EAST)   | new Rover(new Point(1,0), EAST)
+        new Rover(new Point(0,0), WEST)   | new Rover(new Point(-1,0), WEST)
     }
 
     def "can drive the rover with multiple commands"() {
         given:
-        def rover = new Rover(new Point(0,0), "N")
+        def rover = new Rover(new Point(0,0), NORTH)
 
         when:
         rover.command("f,l,r,l,f,f")
 
         then:
-        rover == new Rover(new Point(-2, 1),"W")
+        rover == new Rover(new Point(-2, 1), WEST)
     }
 
 
