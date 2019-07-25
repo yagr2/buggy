@@ -63,6 +63,22 @@ class RoverSpec extends Specification {
         new Rover(new Point(0,0), WEST)   | new Rover(new Point(-1,0), WEST)
     }
 
+    @Unroll("when facing #rover.orientation driving backwards will move from #rover.position to #expectedPosition.position")
+    def "the rover can move backwards"() {
+        when:
+        rover.drive("b")
+
+        then:
+        rover == expectedPosition
+
+        where:
+        rover                             | expectedPosition
+        new Rover(new Point(1,1), NORTH)  | new Rover(new Point(1,0), NORTH)
+        new Rover(new Point(1,1), SOUTH)  | new Rover(new Point(1,2), SOUTH)
+        new Rover(new Point(1,1), EAST)   | new Rover(new Point(0,1), EAST)
+        new Rover(new Point(1,1), WEST)   | new Rover(new Point(2,1), WEST)
+    }
+
     def "can drive the rover with multiple commands"() {
         given:
         def rover = new Rover(new Point(0,0), NORTH)
